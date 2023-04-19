@@ -147,8 +147,8 @@ input {
   justify-content: center;
   width: 480px;
   height: auto;
-  background-color: #f4f4f9;
   min-height: 440px;
+  background-color: #f4f4f9;
   border-radius: 24px;
 }
 
