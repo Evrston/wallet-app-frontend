@@ -1,3 +1,24 @@
+const onLogout = () => {
+  localStorage.clear();
+  window.open("../../../index.html", "_self");
+};
+
+const onDeleteItem = async (id) => {
+  try {
+    const email = localStorage.getItem("@WalletApp:userEmail");
+    await fetch(`https://mp-wallet-app-api.herokuapp.com/finances/${id}`, {
+      method: "DELETE",
+      headers: {
+        email: email,
+      },
+    });
+
+    onLoadFinancesData();
+  } catch (error) {
+    alert("Erro ao Deletar Item");
+  }
+};
+
 const renderFinancesList = (data) => {
   const table = document.getElementById("finances-table");
   table.innerHTML = "";
@@ -70,6 +91,8 @@ const renderFinancesList = (data) => {
 
     //delete
     const deleteTd = document.createElement("td");
+    deleteTd.style.cursor = "pointer";
+    deleteTd.onclick = () => onDeleteItem(item.id);
     const deleteText = document.createTextNode("Deletar");
     deleteTd.appendChild(deleteText);
     tableRow.appendChild(deleteTd);
@@ -122,6 +145,7 @@ const renderFinancesElements = (data) => {
   );
   const revenuesTextElement = document.createElement("h1");
   revenuesTextElement.className = "mt smaller";
+  revenuesTextElement.style.color = "green";
   revenuesTextElement.appendChild(revenuesText);
   financeCard2.appendChild(revenuesTextElement);
 
@@ -142,6 +166,7 @@ const renderFinancesElements = (data) => {
   );
   const expensesTextElement = document.createElement("h1");
   expensesTextElement.className = "mt smaller";
+  expensesTextElement.style.color = "red";
   expensesTextElement.appendChild(expensesText);
   financeCard3.appendChild(expensesTextElement);
 
@@ -169,10 +194,10 @@ const renderFinancesElements = (data) => {
 
 const onLoadFinancesData = async () => {
   try {
-    const date = "2022-12-15";
+    const dateInputValue = document.getElementById("select-date").value;
     const email = localStorage.getItem("@WalletApp:userEmail");
     const result = await fetch(
-      `https://mp-wallet-app-api.herokuapp.com/finances?date=${date}`,
+      `https://mp-wallet-app-api.herokuapp.com/finances?date=${dateInputValue}`,
       {
         method: "GET",
         headers: {
@@ -206,6 +231,8 @@ const onLoadUserInfo = () => {
   //logout link
   const logoutElement = document.createElement("a");
   const logoutText = document.createTextNode("Sair");
+  logoutElement.onclick = () => onLogout();
+  logoutElement.style.cursor = "pointer";
   logoutElement.appendChild(logoutText);
   navbarUserInfo.appendChild(logoutElement);
 
@@ -244,6 +271,11 @@ const onOpenModal = () => {
 const onCloseModal = () => {
   const modal = document.getElementById("modal");
   modal.style.display = "none";
+};
+
+const formReset = () => {
+  const form = document.getElementById("form-finance-release");
+  form.reset();
 };
 
 const onCallAddFinance = async (data) => {
@@ -290,6 +322,7 @@ const onCreateFinanceRealese = async (target) => {
       console.log({ error });
       return;
     }
+    formReset();
     onCloseModal();
     onLoadFinancesData();
   } catch (error) {
@@ -298,7 +331,17 @@ const onCreateFinanceRealese = async (target) => {
   }
 };
 
+const setInitialDate = () => {
+  const dateInput = document.getElementById("select-date");
+  const nowDate = new Date().toISOString().split("T")[0];
+  dateInput.value = nowDate;
+  dateInput.addEventListener("change", () => {
+    onLoadFinancesData();
+  });
+};
+
 window.onload = () => {
+  setInitialDate();
   onLoadUserInfo();
   onLoadFinancesData();
   onLoadCategories();
