@@ -1,6 +1,6 @@
 # Wallet App
 
-<img src="https://github.com/Evrston/wallet-app-frontend/blob/main/src/img/preview.png" alt="Wallet App Preview" height="105" width="270">
+<img src="https://github.com/Evrston/wallet-app-frontend/blob/main/src/img/preview.png" alt="Wallet App Preview" width="675" height="261" >
 
 ## Introduction
 
